@@ -1,0 +1,29 @@
+Account Summary
+Account,Net Account Value,Total Gain $,Total Gain %,Day's Gain Unrealized $,Day's Gain Unrealized %,2023 Contributions,Cash Purchasing Power
+"Roth IRA -XXXX",10000.60,1000.60,42.69,42.69,.01,.00,781.05
+
+
+View Summary - All Positions
+Filters applied:
+Symbol,Security type(s),Sort by,Sort order,
+,All,Symbol,Asc,
+
+Symbol,Last Price $,Change $,Change %,Quantity,Price Paid $,Day's Gain $,Total Gain $,Total Gain %,Value $
+SPY,342.56,0,0,43,325.20,0,745.48,0,14730.08
+VTI,223.44,0,0,36,205.20,0,656.64,0,8043.84
+VTSAX,91.22,0,0,55,86.00,0,286.10,0,5016.10
+QQQ,382.11,0,0,24,360.00,0,529.44,0,9170.64
+VEA,51.37,0,0,77,47.50,0,298.19,0,3955.49
+VT,96.23,0,0,90,92.10,0,371.70,0,8660.70
+IJH,220.77,0,0,29,210.00,0,311.41,0,6402.33
+IJR,94.37,0,0,70,89.30,0,356.90,0,6615.90
+GLD,173.62,0,0,10,165.00,0,86.20,0,1736.20
+TSLA,1013.44,0,0,12,980.00,0,400.32,0,12161.28
+AAPL,147.44,0,0,50,143.10,0,216.50,0,7372.00
+MSFT,308.41,0,0,18,298.00,0,187.38,0,5551.38
+CASH,,,,,,,,,781.05,
+TOTAL,,,,,0,0,0,0,0,
+
+
+
+Generated at Oct 20 2023 10:00 PM ET
