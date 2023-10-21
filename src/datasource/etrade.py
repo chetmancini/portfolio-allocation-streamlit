@@ -6,6 +6,7 @@ from src.datasource.base import DataSource
 
 class ETradeCSVDataSource(DataSource):
 
+
     def __init__(self, csv_file):
         self.csv_file = csv_file
         self.temp_cash = 0.0
