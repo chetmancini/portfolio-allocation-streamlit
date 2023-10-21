@@ -51,6 +51,9 @@ class Portfolio:
     def set_account_name(self, account_name):
         self.account_name = account_name
 
+    def set_portfolio_type(self, portfolio_type):
+        self.portfolio_type = portfolio_type
+
     def df(self):
         return pd.DataFrame((holding.to_dict() for holding in self.holdings.values()))
 

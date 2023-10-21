@@ -1,8 +1,8 @@
 import csv
+import os
 import pandas as pd
 from portfolio import Portfolio, Security
-from src.datasource.base import DataSource
-
+from datasource.base import DataSource
 
 class ETradeCSVDataSource(DataSource):
 
@@ -10,6 +10,15 @@ class ETradeCSVDataSource(DataSource):
     def __init__(self, csv_file):
         self.csv_file = csv_file
         self.temp_cash = 0.0
+
+    def validate(self) -> bool:
+        with open(self.csv_file, 'r') as f:
+            first_line = f.readline()
+            f.seek(-2, os.SEEK_END)
+            while f.read(1) != b'\n':
+                f.seek(-2, os.SEEK_CUR)
+            last_line = f.readline().decode()
+        return first_line.startswith('Account Summary') and last_line.startswith('Generated at')
 
     def _handle_cash(self, bad_line: list[str]) -> None:
         if bad_line[0] == 'CASH':
