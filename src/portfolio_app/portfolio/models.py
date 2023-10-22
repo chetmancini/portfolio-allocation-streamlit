@@ -5,11 +5,11 @@ class BaseAllocationModel(BaseModel):
     """Base allocation model."""
 
     def to_dict(self):
-        return {f"{f}_pct": getattr(self, f) for f in self.__fields__}
+        return {f"{f}_pct": getattr(self, f) for f in self.model_fields}
 
     @classmethod
     def keys_labels(cls) -> Tuple[List[str], List[str]]:
-        return [f"{f}_pct" for f in cls.__fields__], [f.title for f in cls.__fields__.values()]
+        return [f"{f}_pct" for f in cls.model_fields], [f.title for f in cls.model_fields.values()]
 
 
 class USInternationalAllocation(BaseAllocationModel):
@@ -26,7 +26,7 @@ class RegionAllocation(BaseAllocationModel):
     eama: int = Field(title="Europe & Middle East",default=0, strict=False)
     latam: int = Field(title="Latin America", default=0, strict=False)
     apac: int = Field(title="Asia/Pacific", default=0, strict=False)
-    global_: int = Field(title="Global", alias="global", default=100, strict=False)
+    global_: int = Field(title="Global", alias="global_", default=100, strict=False)
 
 
 class FundAssetAllocation(BaseAllocationModel):
@@ -65,17 +65,17 @@ class EconomicStatusAllocation(BaseAllocationModel):
 class SectorAllocation(BaseAllocationModel):
     """Sector allocation in percentages."""
 
-    information_technology: int = Field(title="Information Technology")
-    health_care: int = Field(title="Health Care")
-    financials: int = Field(title="Financials")
-    consumer_discretionary: int = Field(title="Consumer Discretionary")
-    communication_services: int = Field(title="Communication Services")
-    industrials: int = Field(title="Industrials")
-    consumer_staples: int = Field(title="Consumer Staples")
-    energy: int = Field(title="Energy")
-    utilities: int = Field(title="Utilities")
-    real_estate: int = Field(title="Real Estate")
-    materials: int = Field(title="Materials")
+    information_technology: int = Field(title="Information Technology", default=0, strict=False)
+    health_care: int = Field(title="Health Care", default=0, strict=False)
+    financials: int = Field(title="Financials", default=0, strict=False)
+    consumer_discretionary: int = Field(title="Consumer Discretionary", default=0, strict=False)
+    communication_services: int = Field(title="Communication Services", default=0, strict=False)
+    industrials: int = Field(title="Industrials", default=0, strict=False)
+    consumer_staples: int = Field(title="Consumer Staples", default=0, strict=False)
+    energy: int = Field(title="Energy", default=0, strict=False)
+    utilities: int = Field(title="Utilities", default=0, strict=False)
+    real_estate: int = Field(title="Real Estate", default=0, strict=False)
+    materials: int = Field(title="Materials", default=0, strict=False)
 
 
 class SecurityAllocation(BaseModel):
