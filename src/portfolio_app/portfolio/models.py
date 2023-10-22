@@ -113,8 +113,22 @@ class SectorAllocation(BaseAllocationModel):
 class SecurityAllocation(BaseModel):
     """Security allocation in percentages."""
 
-    symbol: str
-    security_name: str
+    symbol: str = Field(
+        title="Symbol", 
+        description="Ticker symbol", 
+        strict=True,
+    )
+    security_name: str = Field(
+        title="Security Name", 
+        description="Security name", 
+        strict=True,
+    )
+    expense_ratio: float = Field(
+        title="Expense Ratio", 
+        description="Expense ratio", 
+        default=0.0, 
+        strict=False,
+    )
 
     fund_asset_allocation: FundAssetAllocation
     market_cap_allocation: MarketCapAllocation

@@ -5,7 +5,6 @@ from portfolio_app.portfolio.models import (
     USInternationalAllocation,
     RegionAllocation,
     FundAssetAllocation,
-    MarketCapAllocation,
 )
 
 
