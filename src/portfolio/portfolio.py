@@ -3,6 +3,9 @@ from typing import Optional
 
 import pandas as pd
 
+from portfolio.allocation import AllocationLookupService
+
+allocation_service = AllocationLookupService()
 
 class PortfolioType(Enum):
     TAXABLE = "Taxable"
@@ -38,23 +41,43 @@ class Portfolio:
         self.account_name = account_name
         self.portfolio_source = portfolio_source
         self.portfolio_type = portfolio_type
+        self.security_allocation_data = {}
+        self._data_complete = False
 
-    def total_value(self):
+    def total_value(self) -> float:
         return self.cash + sum((holding.total_value for holding in self.holdings.values()))
 
     def add_security(self, security):
         self.holdings[security.symbol] = security
 
-    def set_cash(self, cash):
+    def set_cash(self, cash) -> None:
         self.cash = cash
 
-    def set_account_name(self, account_name):
+    def set_account_name(self, account_name) -> None:
         self.account_name = account_name
 
-    def set_portfolio_type(self, portfolio_type):
+    def set_portfolio_type(self, portfolio_type: PortfolioType) -> None:
         self.portfolio_type = portfolio_type
 
+    def _populate_security_names(self):
+        for symbol, security in self.holdings.items():
+            if symbol in self.security_allocation_data:
+                if not security.name:
+                    security.name = self.security_allocation_data[symbol].security_name
+    
+    def _fetch_security_data(self):
+        for symbol in self.holdings.keys():
+            self.security_allocation_data[symbol] = allocation_service.get_allocations_by_symbol(symbol)
+
+    def _complete_portfolio_data(self):
+        if not self.security_allocation_data or not self._data_complete:
+            self._fetch_security_data()
+            self._populate_security_names()
+            self._data_complete = True
+
     def df(self):
+        if not self._data_complete:
+            self._complete_portfolio_data()
         return pd.DataFrame((holding.to_dict() for holding in self.holdings.values()))
 
 

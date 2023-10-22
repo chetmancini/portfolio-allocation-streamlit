@@ -1,7 +1,8 @@
 import csv
+from io import StringIO
 import os
 import pandas as pd
-from portfolio import Portfolio, Security
+from portfolio.portfolio import Portfolio, Security
 from datasource.base import DataSource
 
 class ETradeCSVDataSource(DataSource):
@@ -12,13 +13,9 @@ class ETradeCSVDataSource(DataSource):
         self.temp_cash = 0.0
 
     def validate(self) -> bool:
-        with open(self.csv_file, 'r') as f:
-            first_line = f.readline()
-            f.seek(-2, os.SEEK_END)
-            while f.read(1) != b'\n':
-                f.seek(-2, os.SEEK_CUR)
-            last_line = f.readline().decode()
-        return first_line.startswith('Account Summary') and last_line.startswith('Generated at')
+        with StringIO(self.csv_file.getvalue().decode("utf-8")) as sio:
+            first_line = sio.readline()
+            return first_line.startswith('Account Summary')
 
     def _handle_cash(self, bad_line: list[str]) -> None:
         if bad_line[0] == 'CASH':
@@ -31,12 +28,12 @@ class ETradeCSVDataSource(DataSource):
         )
 
     def get_portfolio_name(self):
-        with open(self.csv_file, 'r') as f:
-            reader = csv.reader(f)
+        with StringIO(self.csv_file.getvalue().decode("utf-8")) as sio:
+            reader = csv.reader(sio)
             next(reader)
             next(reader)  # total headers
             total_values = next(reader)
-            f.seek(0)
+            self.csv_file.seek(0)
             return total_values[0]
 
     def get_portfolio(self) -> Portfolio:

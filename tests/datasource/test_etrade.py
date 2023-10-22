@@ -1,6 +1,6 @@
 import pytest
 from src.datasource.etrade import ETradeCSVDataSource
-from portfolio import Portfolio
+from portfolio.portfolio import Portfolio
 
 @pytest.fixture
 def etrade():

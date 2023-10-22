@@ -3,7 +3,8 @@ from typing import Optional
 
 import openai
 
-from src.allocation import SecurityAllocation
+from portfolio.models import SecurityAllocation
+
 
 
 class OpenAIClient:
@@ -18,9 +19,11 @@ class OpenAIClient:
             "messages": [
                 {"role": "user",
                  "content": f"Give me an asset allocation breakdown for {symbol}. "
-                            f"Give data as an integer percentage for the funds assets (stocks vs bonds), "
-                            f"the market cap, usa vs international, and growth vs value. "
-                            f"If it's a blend use 50-50 for growth / value."}
+                            f"Give data as an integer percentage for the funds assets (stocks vs bonds). "
+                            f"Give the market cap split by small/medium/large."
+                            f"Give usa vs international, and for regions split out if possible, default 100 to global if there is insufficient data."
+                            f"Finally provide growth vs value. If it's a blend use 50-50 for growth / value."
+                }
             ],
             "functions": [
                 {
@@ -29,7 +32,7 @@ class OpenAIClient:
                                    "First the name, "
                                    "then the fund asset allocation percentage of stocks and bonds (if it is a fund), "
                                    "then the market cap weighting, "
-                                   "then percent us and international, then if it's growth or value, "
+                                   "then percent us and international, the split by economic region (default to global), then if it's growth or value, "
                                    "and finally the economic status breakdown of the portfolio's holdings "
                                    "(developed, emerging, or frontier)",
                     "parameters": SecurityAllocation.model_json_schema()
@@ -41,6 +44,7 @@ class OpenAIClient:
 
     def lookup_allocation(self, symbol: str):
         response = openai.ChatCompletion.create(**self._lookup_allocation_args(symbol))
+        print(response)
         return SecurityAllocation.model_validate_json(response.choices[0]["message"]["function_call"]["arguments"])
 
     async def lookup_allocation_async(self, symbol: str):

@@ -1,7 +1,5 @@
-from pydantic import BaseModel
-from typing import Dict
 
-from src.openai import OpenAIClient
+from pydantic import BaseModel, Field
 
 
 class USInternationalAllocation(BaseModel):
@@ -10,11 +8,11 @@ class USInternationalAllocation(BaseModel):
 
 
 class RegionAllocation(BaseModel):
-    north_america: int
-    eama: int
-    latam: int
-    apac: int
-    global_: int
+    north_america: int = Field(default=0)
+    eama: int = Field(default=0)
+    latam: int = Field(default=0)
+    apac: int = Field(default=0)
+    global_: int = Field(alias="global", default=100, strict=False)
 
 
 class FundAssetAllocation(BaseModel):
@@ -51,19 +49,3 @@ class SecurityAllocation(BaseModel):
     region_allocation: RegionAllocation
     growth_value_allocation: GrowthValueAllocation
     economic_status_allocation: EconomicStatusAllocation
-
-
-
-class AllocationLookupService:
-
-    def __init__(self):
-        self.cache: Dict[str, SecurityAllocation] = {}
-        self.openai_client = OpenAIClient()
-
-    def get_allocations_by_symbol(self, symbol: str) -> SecurityAllocation:
-        if symbol in self.cache:
-            return self.cache[symbol]
-
-        response = self.openai_client.lookup_allocation(symbol=symbol)
-        self.cache[symbol] = response
-        return response

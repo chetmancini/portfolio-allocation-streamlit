@@ -1,4 +1,4 @@
-from src.portfolio.portfolio import Security, Portfolio
+from portfolio.portfolio import Security, Portfolio
 
 
 class TestPortfolio:
