@@ -1,6 +1,7 @@
 
 
 
+from portfolio_app.portfolio.portfolio import SecurityType
 from portfolio_app.portfolio.portfolio import Portfolio, Security
 
 
@@ -12,7 +13,14 @@ class TestPortfolio:
 
 class TestSecurity:
     def test_security(self):
-        subject = Security.build('AAPL', 'Apple', 10, 100, 50, 1000)
+        subject = Security.build(
+            symbol='AAPL', 
+            name='Apple',
+            security_type=SecurityType.STOCK,
+            quantity=10, 
+            last_price=100, 
+            avg_price_paid=50
+        )
         assert subject.symbol == 'AAPL'
         assert subject.name == 'Apple'
         assert subject.quantity == 10

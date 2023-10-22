@@ -82,33 +82,45 @@ class Portfolio:
 
 
 class SecurityType(Enum):
-    STOCK = 1
-    OPTION = 2
-    BOND = 3
-    ETF = 4
-    MUTUAL_FUND = 5
-    OTHER = 6
+    STOCK = 'Stock'
+    OPTION = 'Option'
+    BOND = 'Bond'
+    ETF = 'ETF'
+    REIT = 'REIT'
+    MUTUAL_FUND = 'Mutual Fund'
+    OTHER = 'Other'
 
 
 class Security:
 
     def __init__(self):
-        self.symbol = ''
-        self.name = ''
-        self.quantity = 0.0
+        self.symbol: str = ''
+        self.name: str = ''
+        self.security_type: SecurityType = None
+        self.quantity: float = 0.0
         self.last_price = None
         self.avg_price_paid = None
         self.total_value = 0.0
 
     @classmethod
-    def build(cls, symbol, name, quantity, last_price, avg_price_paid, total_value) -> 'Security':
+    def build(
+        cls, 
+        symbol: str, 
+        name: Optional[str], 
+        security_type: Optional[SecurityType],
+        quantity: float, 
+        last_price, 
+        avg_price_paid, 
+        total_value: Optional[float] = None
+    ) -> 'Security':
         security = Security()
         security.symbol = symbol
         security.name = name
+        security.security_type = security_type
         security.quantity = quantity
         security.last_price = last_price
         security.avg_price_paid = avg_price_paid
-        security.total_value = total_value
+        security.total_value = total_value or (quantity * last_price)
         return security
 
     def total_return(self) -> Optional[float]:
