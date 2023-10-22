@@ -24,7 +24,7 @@ def render_data(portfolio: Portfolio):
     st.write(portfolio.allocation_df())
     st.write(portfolio.get_us_international_df())
     st.write(portfolio.get_growth_value_df())
-    st.write(portfolio.get_market_cap_df())
+    # st.write(portfolio.get_market_cap_df())
     st.write(portfolio.get_region_df())
     st.write(portfolio.get_economic_status_df())
     

@@ -4,7 +4,7 @@ import streamlit as st
 import pandas as pd
 
 from portfolio_app.portfolio.allocation import AllocationLookupService
-from portfolio_app.portfolio.models import SecurityAllocation
+from portfolio_app.portfolio.models import EconomicStatusAllocation, MarketCapAllocation, RegionAllocation, SecurityAllocation
 from portfolio_app.portfolio.util import float_dollars, float_pct
 
 allocation_service = AllocationLookupService()
@@ -154,20 +154,17 @@ class Portfolio:
     
     def get_market_cap_df(self) -> pd.DataFrame:
         return self.get_bucketed_df(
-            ['large_cap_pct', 'mid_cap_pct', 'small_cap_pct'], 
-            ['Large Cap', 'Mid Cap', 'Small Cap']
+            *MarketCapAllocation.keys_labels() 
         )
     
     def get_region_df(self) -> pd.DataFrame:
         return self.get_bucketed_df(
-            ['north_america_pct', 'eama_pct', 'latam_pct', 'apac_pct', 'global_pct'], 
-            ['North America', 'EAMA', 'LATAM', 'APAC', 'Global']
+            *RegionAllocation.keys_labels() 
         )
     
     def get_economic_status_df(self) -> pd.DataFrame:
         return self.get_bucketed_df(
-            ['developed_pct', 'emerging_pct', 'frontier_pct'], 
-            ['Developed Markets', 'Emerging Markets', 'Frontier Markets']
+            *EconomicStatusAllocation.keys_labels() 
         )
 
 

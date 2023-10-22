@@ -1,164 +1,86 @@
-
 from typing import List, Tuple
 from pydantic import BaseModel, Field
 
+class BaseAllocationModel(BaseModel):
+    """Base allocation model."""
 
-class USInternationalAllocation(BaseModel):
+    def to_dict(self):
+        return {f"{f}_pct": getattr(self, f) for f in self.__fields__}
+
+    @classmethod
+    def keys_labels(cls) -> Tuple[List[str], List[str]]:
+        return [f"{f}_pct" for f in cls.__fields__], [f.title for f in cls.__fields__.values()]
+
+
+class USInternationalAllocation(BaseAllocationModel):
     """US and international allocation in percentages."""
-    us: int
-    international: int
 
-    def to_dict(self):
-        return {
-            "us_pct": self.us,
-            "international_pct": self.international,
-        }
-    
-    @classmethod
-    def keys_labels(cls) -> Tuple[List[str], List[str]]:
-        return cls().to_dict().keys(), ['US', 'International']
+    us: int = Field(title="US", default=0, strict=False)
+    international: int = Field(title="International", default=0, strict=False)
 
 
-class RegionAllocation(BaseModel):
+class RegionAllocation(BaseAllocationModel):
     """Region allocation in percentages."""
-    north_america: int = Field(default=0, strict=False)
-    eama: int = Field(default=0, strict=False)
-    latam: int = Field(default=0, strict=False)
-    apac: int = Field(default=0, strict=False)
-    global_: int = Field(alias="global", default=100, strict=False)
 
-    def to_dict(self):
-        return {
-            "region_north_america_pct": self.north_america,
-            "region_eama_pct": self.eama,
-            "region_latam_pct": self.latam,
-            "region_apac_pct": self.apac,
-            "region_global_pct": self.global_,
-        }
-
-    def keys_labels(cls) -> Tuple[List[str], List[str]]:
-        return cls().to_dict().keys(), ['North America', 'EAMA', 'LATAM', 'APAC', 'Global']
+    north_america: int = Field(title="North America", default=0, strict=False)
+    eama: int = Field(title="Europe & Middle East",default=0, strict=False)
+    latam: int = Field(title="Latin America", default=0, strict=False)
+    apac: int = Field(title="Asia/Pacific", default=0, strict=False)
+    global_: int = Field(title="Global", alias="global", default=100, strict=False)
 
 
-class FundAssetAllocation(BaseModel):
+class FundAssetAllocation(BaseAllocationModel):
     """Fund asset allocation in percentages."""
-    stocks: int
-    bonds: int
-    real_estate: int
-    cash: int
 
-    def to_dict(self):
-        return {
-            "stocks_pct": self.stocks,
-            "bonds_pct": self.bonds,
-            "real_estate_pct": self.real_estate,
-            "cash_pct": self.cash,
-        }
-    
-    @classmethod
-    def keys_labels(cls) -> Tuple[List[str], List[str]]:
-        return cls().to_dict().keys(), ['Stocks', 'Bonds', 'Real Estate', 'Cash']
-        
+    stocks: int = Field(title="Stocks", default=0, strict=False)
+    bonds: int = Field(title="Bonds", default=0, strict=False)
+    real_estate: int = Field(title="Real Estate", default=0, strict=False)
+    cash: int = Field(title="Cash", default=0, strict=False)
 
 
-class MarketCapAllocation(BaseModel):
+class MarketCapAllocation(BaseAllocationModel):
     """Market cap allocation in percentages."""
-    large_cap: int = Field(strict=False)
-    mid_cap: int = Field(strict=False)
-    small_cap: int = Field(strict=False)
 
-    def to_dict(self):
-        return {
-            "large_cap_pct": self.large_cap,
-            "mid_cap_pct": self.mid_cap,
-            "small_cap_pct": self.small_cap,
-        }
-    
-    @classmethod
-    def keys_labels(cls) -> Tuple[List[str], List[str]]:
-        return cls().to_dict().keys(), ['Large Cap', 'Mid Cap', 'Small Cap']
+    large_cap: int = Field(title="Large Cap", strict=False)
+    mid_cap: int = Field(title="Mid Cap", strict=False)
+    small_cap: int = Field(title="Small Cap", strict=False)
 
 
-class GrowthValueAllocation(BaseModel):
+class GrowthValueAllocation(BaseAllocationModel):
     """Growth value allocation in percentages."""
-    growth: int
-    value: int
 
-    def to_dict(self):
-        return {
-            "growth_pct": self.growth,
-            "value_pct": self.value,
-        }
-    
-    def keys_labels(cls) -> Tuple[List[str], List[str]]:
-        return cls().to_dict().keys(), ['Growth', 'Value']
+    growth: int = Field(title="Growth", default=0, strict=False)
+    value: int = Field(title="Value", default=0, strict=False)
 
 
-class EconomicStatusAllocation(BaseModel):
+
+class EconomicStatusAllocation(BaseAllocationModel):
     """Economic status allocation in percentages."""
-    developed: int
-    emerging: int
-    frontier: int
 
-    def to_dict(self):
-        return {
-            "developed_markets_pct": self.developed,
-            "emerging_markets_pct": self.emerging,
-            "frontier_markets_pct": self.frontier,
-        }
+    developed: int = Field(title="Developed Markets", default=0, strict=False)
+    emerging: int = Field(title="Emerging Markets", default=0, strict=False)
+    frontier: int = Field(title="Frontier Markets", default=0, strict=False)
 
-    @classmethod 
-    def keys_labels(cls) -> Tuple[List[str], List[str]]:
-        return cls().to_dict().keys(), ['Developed Markets', 'Emerging Markets', 'Frontier Markets']
-    
 
-class SectorAllocation(BaseModel):
+class SectorAllocation(BaseAllocationModel):
     """Sector allocation in percentages."""
-    information_technology: int
-    health_care: int
-    financials: int
-    consumer_discretionary: int
-    communication_services: int
-    industrials: int
-    consumer_staples: int
-    energy: int
-    utilities: int
-    real_estate: int
-    materials: int
 
-    def to_dict(self):
-        return {
-            "sector_information_technology_pct": self.information_technology,
-            "sector_health_care_pct": self.health_care,
-            "sector_financials_pct": self.financials,
-            "sector_consumer_discretionary_pct": self.consumer_discretionary,
-            "sector_communication_services_pct": self.communication_services,
-            "sector_industrials_pct": self.industrials,
-            "sector_consumer_staples_pct": self.consumer_staples,
-            "sector_energy_pct": self.energy,
-            "sector_utilities_pct": self.utilities,
-            "sector_real_estate_pct": self.real_estate,
-            "sector_materials_pct": self.materials,
-        }
-    
-    @classmethod
-    def keys_labels(cls) -> Tuple[List[str], List[str]]:
-        return cls().to_dict().keys(), [
-            'Information Technology', 
-            'Health Care', 
-            'Financials', 
-            'Consumer Discretionary', 
-            'Communication Services',
-            'Industrials', 
-            'Consumer Staples', 
-            'Energy', 'Utilities', 
-            'Real Estate', 
-            'Materials'
-        ]
+    information_technology: int = Field(title="Information Technology")
+    health_care: int = Field(title="Health Care")
+    financials: int = Field(title="Financials")
+    consumer_discretionary: int = Field(title="Consumer Discretionary")
+    communication_services: int = Field(title="Communication Services")
+    industrials: int = Field(title="Industrials")
+    consumer_staples: int = Field(title="Consumer Staples")
+    energy: int = Field(title="Energy")
+    utilities: int = Field(title="Utilities")
+    real_estate: int = Field(title="Real Estate")
+    materials: int = Field(title="Materials")
 
 
 class SecurityAllocation(BaseModel):
     """Security allocation in percentages."""
+
     symbol: str
     security_name: str
 
@@ -181,4 +103,3 @@ class SecurityAllocation(BaseModel):
         ret.update(self.growth_value_allocation.to_dict())
         ret.update(self.economic_status_allocation.to_dict())
         return ret
-    
