@@ -1,4 +1,5 @@
 
+from typing import List, Tuple
 from pydantic import BaseModel, Field
 
 
@@ -12,6 +13,10 @@ class USInternationalAllocation(BaseModel):
             "us_pct": self.us,
             "international_pct": self.international,
         }
+    
+    @classmethod
+    def keys_labels(cls) -> Tuple[List[str], List[str]]:
+        return cls().to_dict().keys(), ['US', 'International']
 
 
 class RegionAllocation(BaseModel):
@@ -31,6 +36,9 @@ class RegionAllocation(BaseModel):
             "region_global_pct": self.global_,
         }
 
+    def keys_labels(cls) -> Tuple[List[str], List[str]]:
+        return cls().to_dict().keys(), ['North America', 'EAMA', 'LATAM', 'APAC', 'Global']
+
 
 class FundAssetAllocation(BaseModel):
     """Fund asset allocation in percentages."""
@@ -46,6 +54,11 @@ class FundAssetAllocation(BaseModel):
             "real_estate_pct": self.real_estate,
             "cash_pct": self.cash,
         }
+    
+    @classmethod
+    def keys_labels(cls) -> Tuple[List[str], List[str]]:
+        return cls().to_dict().keys(), ['Stocks', 'Bonds', 'Real Estate', 'Cash']
+        
 
 
 class MarketCapAllocation(BaseModel):
@@ -60,6 +73,10 @@ class MarketCapAllocation(BaseModel):
             "mid_cap_pct": self.mid_cap,
             "small_cap_pct": self.small_cap,
         }
+    
+    @classmethod
+    def keys_labels(cls) -> Tuple[List[str], List[str]]:
+        return cls().to_dict().keys(), ['Large Cap', 'Mid Cap', 'Small Cap']
 
 
 class GrowthValueAllocation(BaseModel):
@@ -72,6 +89,9 @@ class GrowthValueAllocation(BaseModel):
             "growth_pct": self.growth,
             "value_pct": self.value,
         }
+    
+    def keys_labels(cls) -> Tuple[List[str], List[str]]:
+        return cls().to_dict().keys(), ['Growth', 'Value']
 
 
 class EconomicStatusAllocation(BaseModel):
@@ -86,6 +106,55 @@ class EconomicStatusAllocation(BaseModel):
             "emerging_markets_pct": self.emerging,
             "frontier_markets_pct": self.frontier,
         }
+
+    @classmethod 
+    def keys_labels(cls) -> Tuple[List[str], List[str]]:
+        return cls().to_dict().keys(), ['Developed Markets', 'Emerging Markets', 'Frontier Markets']
+    
+
+class SectorAllocation(BaseModel):
+    """Sector allocation in percentages."""
+    information_technology: int
+    health_care: int
+    financials: int
+    consumer_discretionary: int
+    communication_services: int
+    industrials: int
+    consumer_staples: int
+    energy: int
+    utilities: int
+    real_estate: int
+    materials: int
+
+    def to_dict(self):
+        return {
+            "sector_information_technology_pct": self.information_technology,
+            "sector_health_care_pct": self.health_care,
+            "sector_financials_pct": self.financials,
+            "sector_consumer_discretionary_pct": self.consumer_discretionary,
+            "sector_communication_services_pct": self.communication_services,
+            "sector_industrials_pct": self.industrials,
+            "sector_consumer_staples_pct": self.consumer_staples,
+            "sector_energy_pct": self.energy,
+            "sector_utilities_pct": self.utilities,
+            "sector_real_estate_pct": self.real_estate,
+            "sector_materials_pct": self.materials,
+        }
+    
+    @classmethod
+    def keys_labels(cls) -> Tuple[List[str], List[str]]:
+        return cls().to_dict().keys(), [
+            'Information Technology', 
+            'Health Care', 
+            'Financials', 
+            'Consumer Discretionary', 
+            'Communication Services',
+            'Industrials', 
+            'Consumer Staples', 
+            'Energy', 'Utilities', 
+            'Real Estate', 
+            'Materials'
+        ]
 
 
 class SecurityAllocation(BaseModel):

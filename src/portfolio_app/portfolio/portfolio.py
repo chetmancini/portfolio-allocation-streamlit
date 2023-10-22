@@ -1,5 +1,5 @@
 from enum import Enum
-from typing import Dict, Optional, Tuple
+from typing import Dict, List, Optional, Tuple
 import streamlit as st
 import pandas as pd
 
@@ -139,6 +139,36 @@ class Portfolio:
             'Total Value': [float_dollars(total_growth_amt), float_dollars(total_value_amt)],
             'Percentage': [float_pct(growth_pct), float_pct(value_pct)]
         }, index=['Growth', 'Value'])
+    
+    def get_bucketed_df(self, keys: List[str], labels: List[str]) -> pd.DataFrame:
+        merged_df = self._merged_df()
+        totals = [
+            (merged_df['quantity'] * merged_df['last_price'] * merged_df[key] / 100).sum() for key in keys
+        ]
+        total_value = sum(totals)
+        percentages = (float_pct((total / total_value) * 100) for total in totals)
+        return pd.DataFrame({
+            'Total Value': (float_dollars(total) for total in totals),
+            'Percentage': percentages
+        }, index=labels)
+    
+    def get_market_cap_df(self) -> pd.DataFrame:
+        return self.get_bucketed_df(
+            ['large_cap_pct', 'mid_cap_pct', 'small_cap_pct'], 
+            ['Large Cap', 'Mid Cap', 'Small Cap']
+        )
+    
+    def get_region_df(self) -> pd.DataFrame:
+        return self.get_bucketed_df(
+            ['north_america_pct', 'eama_pct', 'latam_pct', 'apac_pct', 'global_pct'], 
+            ['North America', 'EAMA', 'LATAM', 'APAC', 'Global']
+        )
+    
+    def get_economic_status_df(self) -> pd.DataFrame:
+        return self.get_bucketed_df(
+            ['developed_pct', 'emerging_pct', 'frontier_pct'], 
+            ['Developed Markets', 'Emerging Markets', 'Frontier Markets']
+        )
 
 
 
