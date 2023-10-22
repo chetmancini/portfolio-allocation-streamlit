@@ -1,6 +1,5 @@
 import csv
 from io import StringIO
-import os
 import pandas as pd
 from portfolio.portfolio import Portfolio, Security
 from datasource.base import DataSource
