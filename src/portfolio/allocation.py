@@ -49,3 +49,11 @@ class AllocationLookupService:
         response = self.openai_client.lookup_allocation(symbol=symbol)
         self.cache.set(symbol=symbol, allocation=response)
         return response
+    
+    async def get_allocations_by_symbol_async(self, symbol: str) -> SecurityAllocation:
+        if self.cache.exists(symbol):
+            return self.cache.get(symbol)
+
+        response = await self.openai_client.lookup_allocation_async(symbol=symbol)
+        self.cache.set(symbol=symbol, allocation=response)
+        return response

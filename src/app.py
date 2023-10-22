@@ -28,7 +28,7 @@ def render_page():
 
     if uploaded_file is not None:
         portfolio: Portfolio = setup_portfolio(portfolio_type, source, uploaded_file)
-        with st.spinner('Wait for it...'):
+        with st.spinner('File received. Looking up security data...'):
             render_data(portfolio)
 
 
