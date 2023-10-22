@@ -57,12 +57,12 @@ def test_economic_status_allocation():
 def test_sector_allocation():
     allocation = SectorAllocation(information_technology=50, health_care=50)
     assert allocation.to_dict() == {
-        'information_technology_pct': 50,
+        "information_technology_pct": 50,
         "communication_services_pct": 0,
         "consumer_discretionary_pct": 0,
         "consumer_staples_pct": 0,
         "energy_pct": 0,
-        'health_care_pct': 50,
+        "health_care_pct": 50,
         "financials_pct": 0,
         "industrials_pct": 0,
         "materials_pct": 0,
