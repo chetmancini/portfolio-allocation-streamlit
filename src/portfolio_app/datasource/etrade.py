@@ -1,8 +1,8 @@
 import csv
 from io import StringIO
 import pandas as pd
-from portfolio.portfolio import Portfolio, Security
-from datasource.base import DataSource
+from portfolio_app.portfolio.portfolio import Portfolio, Security
+from portfolio_app.datasource.base import DataSource
 
 class ETradeCSVDataSource(DataSource):
 

@@ -1,7 +1,7 @@
 from typing import Dict
 import streamlit as st
-from portfolio.models import SecurityAllocation
-from portfolio.openai import OpenAIClient
+from portfolio_app.portfolio.models import SecurityAllocation
+from portfolio_app.portfolio.openai import OpenAIClient
 
 
 class AllocationCache():

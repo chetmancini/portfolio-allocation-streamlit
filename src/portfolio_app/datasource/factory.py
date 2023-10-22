@@ -1,7 +1,7 @@
 from enum import Enum
 from typing import List, Optional
-from datasource.base import DataSource
-from datasource.etrade import ETradeCSVDataSource
+from portfolio_app.datasource.base import DataSource
+from portfolio_app.datasource.etrade import ETradeCSVDataSource
 
 
 class DataSourceType(Enum):

@@ -1,5 +1,5 @@
 from abc import ABCMeta, abstractmethod
-from portfolio.portfolio import Portfolio
+from portfolio_app.portfolio.portfolio import Portfolio
 
 
 class DataSource(metaclass=ABCMeta):

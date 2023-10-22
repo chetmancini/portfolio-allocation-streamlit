@@ -3,7 +3,7 @@ from typing import Optional
 
 import openai
 
-from portfolio.models import SecurityAllocation
+from portfolio_app.portfolio.models import SecurityAllocation
 
 
 

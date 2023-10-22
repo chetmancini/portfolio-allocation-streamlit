@@ -3,7 +3,7 @@ from typing import Optional
 
 import pandas as pd
 
-from portfolio.allocation import AllocationLookupService
+from portfolio_app.portfolio.allocation import AllocationLookupService
 
 allocation_service = AllocationLookupService()
 

@@ -1,4 +1,7 @@
-from portfolio.portfolio import Security, Portfolio
+
+
+
+from portfolio_app.portfolio.portfolio import Portfolio, Security
 
 
 class TestPortfolio:
