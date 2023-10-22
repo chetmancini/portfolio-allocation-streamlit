@@ -1,8 +1,11 @@
+import os
+import sys
 import streamlit as st
-from datasource.base import DataSource
-from datasource.factory import data_source_factory, data_source_options, data_source_display_name
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir)))
+from portfolio_app.datasource.base import DataSource
+from portfolio_app.datasource.factory import data_source_factory, data_source_options, data_source_display_name
+from portfolio_app.portfolio.portfolio import Portfolio, PortfolioType
 
-from portfolio.portfolio import Portfolio, PortfolioType
 
 
 def setup_portfolio(portfolio_type: PortfolioType, source:str, input_file) -> Portfolio:
@@ -18,6 +21,11 @@ def render_sidebar():
 
 def render_data(portfolio: Portfolio):
     st.write(portfolio.df())
+    st.write(portfolio.allocation_df())
+    st.write(portfolio.get_us_international_df())
+    st.write(portfolio.get_growth_value_df())
+    st.write(f"Total Portfolio Value: {portfolio.total_value()}")
+    
 
 def render_page():
     st.title("Portfolio Optimization")

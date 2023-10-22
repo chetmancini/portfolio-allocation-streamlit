@@ -1,11 +1,14 @@
 from enum import Enum
-from typing import Optional
-
+from typing import Dict, Optional, Tuple
+import streamlit as st
 import pandas as pd
 
 from portfolio_app.portfolio.allocation import AllocationLookupService
+from portfolio_app.portfolio.models import SecurityAllocation
+from portfolio_app.portfolio.util import float_dollars, float_pct
 
 allocation_service = AllocationLookupService()
+
 
 class PortfolioType(Enum):
     TAXABLE = "Taxable"
@@ -29,23 +32,24 @@ class PortfolioType(Enum):
 
 
 class Portfolio:
-
     def __init__(
-            self,
-            account_name: str = None,
-            portfolio_source: str = None,
-            portfolio_type: PortfolioType = None
+        self,
+        account_name: str = None,
+        portfolio_source: str = None,
+        portfolio_type: PortfolioType = None,
     ):
-        self.holdings = {}
-        self.cash = 0.0
-        self.account_name = account_name
-        self.portfolio_source = portfolio_source
-        self.portfolio_type = portfolio_type
-        self.security_allocation_data = {}
-        self._data_complete = False
+        self.holdings: Dict[str, Security] = {}
+        self.cash: float = 0.0
+        self.account_name: str = account_name
+        self.portfolio_source: str = portfolio_source
+        self.portfolio_type: PortfolioType = portfolio_type
+        self.security_allocation_data: Dict[str, SecurityAllocation] = {}
+        self._data_complete: bool = False
 
     def total_value(self) -> float:
-        return self.cash + sum((holding.total_value for holding in self.holdings.values()))
+        return self.cash + sum(
+            (holding.total_value for holding in self.holdings.values())
+        )
 
     def add_security(self, security):
         self.holdings[security.symbol] = security
@@ -64,10 +68,12 @@ class Portfolio:
             if symbol in self.security_allocation_data:
                 if not security.name:
                     security.name = self.security_allocation_data[symbol].security_name
-    
+
     def _fetch_security_data(self):
         for symbol in self.holdings.keys():
-            self.security_allocation_data[symbol] = allocation_service.get_allocations_by_symbol(symbol)
+            self.security_allocation_data[
+                symbol
+            ] = allocation_service.get_allocations_by_symbol(symbol)
 
     def _complete_portfolio_data(self):
         if not self.security_allocation_data or not self._data_complete:
@@ -75,27 +81,81 @@ class Portfolio:
             self._populate_security_names()
             self._data_complete = True
 
-    def df(self):
-        if not self._data_complete:
-            self._complete_portfolio_data()
-        return pd.DataFrame((holding.to_dict() for holding in self.holdings.values()))
+    @st.cache_data()
+    def allocation_df(_self) -> pd.DataFrame:
+        if not _self._data_complete:
+            _self._complete_portfolio_data()
+        return pd.DataFrame(
+            (
+                security_allocation.to_dict()
+                for security_allocation in _self.security_allocation_data.values()
+            )
+        )
+
+    @st.cache_data()
+    def df(_self) -> pd.DataFrame:
+        if not _self._data_complete:
+            _self._complete_portfolio_data()
+        return pd.DataFrame((holding.to_dict() for holding in _self.holdings.values()))
+    
+    def _merged_df(self) -> pd.DataFrame:
+        securities_df = self.df()
+        allocation_df = self.allocation_df()
+        return pd.merge(securities_df, allocation_df, on='symbol') 
+    
+    def get_us_international_df(self) -> pd.DataFrame:
+        merged_df = self._merged_df() 
+        merged_df['us_value'] = merged_df['quantity'] * merged_df['last_price'] * merged_df['us_pct'] / 100
+        merged_df['international_value'] = merged_df['quantity'] * merged_df['last_price'] * merged_df['international_pct'] / 100
+        
+        total_us_value = merged_df['us_value'].sum()
+        total_international_value = merged_df['international_value'].sum()
+        
+        total_value = total_us_value + total_international_value
+        
+        us_pct = (total_us_value / total_value) * 100
+        international_pct = (total_international_value / total_value) * 100
+        
+        return pd.DataFrame({
+            'Total Value': [total_us_value, total_international_value],
+            'Percentage': [float_pct(us_pct), float_pct(international_pct)]
+        }, index=['US', 'International'])
+        
+    
+    def get_growth_value_df(self) -> pd.DataFrame:  
+        merged_df = self._merged_df() 
+        merged_df['growth_amt'] = merged_df['quantity'] * merged_df['last_price'] * merged_df['growth_pct'] / 100
+        merged_df['value_amt'] = merged_df['quantity'] * merged_df['last_price'] * merged_df['value_pct'] / 100
+        
+        total_growth_amt = merged_df['growth_amt'].sum()
+        total_value_amt = merged_df['value_amt'].sum()
+        
+        total_value = total_growth_amt + total_value_amt
+        
+        growth_pct = (total_growth_amt / total_value) * 100
+        value_pct = (total_value_amt / total_value) * 100
+        
+        return pd.DataFrame({
+            'Total Value': [float_dollars(total_growth_amt), float_dollars(total_value_amt)],
+            'Percentage': [float_pct(growth_pct), float_pct(value_pct)]
+        }, index=['Growth', 'Value'])
+
 
 
 class SecurityType(Enum):
-    STOCK = 'Stock'
-    OPTION = 'Option'
-    BOND = 'Bond'
-    ETF = 'ETF'
-    REIT = 'REIT'
-    MUTUAL_FUND = 'Mutual Fund'
-    OTHER = 'Other'
+    STOCK = "Stock"
+    OPTION = "Option"
+    BOND = "Bond"
+    ETF = "ETF"
+    REIT = "REIT"
+    MUTUAL_FUND = "Mutual Fund"
+    OTHER = "Other"
 
 
 class Security:
-
     def __init__(self):
-        self.symbol: str = ''
-        self.name: str = ''
+        self.symbol: str = ""
+        self.name: str = ""
         self.security_type: SecurityType = None
         self.quantity: float = 0.0
         self.last_price = None
@@ -104,15 +164,15 @@ class Security:
 
     @classmethod
     def build(
-        cls, 
-        symbol: str, 
-        name: Optional[str], 
+        cls,
+        symbol: str,
+        name: Optional[str],
         security_type: Optional[SecurityType],
-        quantity: float, 
-        last_price, 
-        avg_price_paid, 
-        total_value: Optional[float] = None
-    ) -> 'Security':
+        quantity: float,
+        last_price,
+        avg_price_paid,
+        total_value: Optional[float] = None,
+    ) -> "Security":
         security = Security()
         security.symbol = symbol
         security.name = name
@@ -130,11 +190,11 @@ class Security:
 
     def to_dict(self):
         return {
-            'symbol': self.symbol,
-            'name': self.name,
-            'quantity': self.quantity,
-            'last_price': self.last_price,
-            'avg_price_paid': self.avg_price_paid,
-            'total_value': self.total_value,
-            'total_return': self.total_return(),
+            "symbol": self.symbol,
+            "name": self.name,
+            "quantity": self.quantity,
+            "last_price": self.last_price,
+            "avg_price_paid": self.avg_price_paid,
+            "total_value": self.total_value,
+            "total_return": self.total_return(),
         }
