@@ -4,12 +4,16 @@ from pydantic import BaseModel, Field
 class BaseAllocationModel(BaseModel):
     """Base allocation model."""
 
+    @classmethod
+    def prefix(cls):
+       return ""
+
     def to_dict(self):
-        return {f"{f}_pct": getattr(self, f) for f in self.model_fields}
+        return {f"{self.prefix()}_{f}_pct": getattr(self, f) for f in self.model_fields}
 
     @classmethod
     def keys_labels(cls) -> Tuple[List[str], List[str]]:
-        return [f"{f}_pct" for f in cls.model_fields], [f.title for f in cls.model_fields.values()]
+        return [f"{cls.prefix()}_{f}_pct" for f in cls.model_fields], [f.title for f in cls.model_fields.values()]
 
 
 class USInternationalAllocation(BaseAllocationModel):
@@ -17,6 +21,10 @@ class USInternationalAllocation(BaseAllocationModel):
 
     us: int = Field(title="US", default=0, strict=False)
     international: int = Field(title="International", default=0, strict=False)
+
+    @classmethod
+    def prefix(cls):
+        return "intl"
 
 
 class RegionAllocation(BaseAllocationModel):
@@ -28,6 +36,10 @@ class RegionAllocation(BaseAllocationModel):
     apac: int = Field(title="Asia/Pacific", default=0, strict=False)
     global_: int = Field(title="Global", alias="global_", default=100, strict=False)
 
+    @classmethod
+    def prefix(cls):
+        return "region"
+
 
 class FundAssetAllocation(BaseAllocationModel):
     """Fund asset allocation in percentages."""
@@ -37,6 +49,10 @@ class FundAssetAllocation(BaseAllocationModel):
     real_estate: int = Field(title="Real Estate", default=0, strict=False)
     cash: int = Field(title="Cash", default=0, strict=False)
 
+    @classmethod
+    def prefix(cls):
+        return "asset_type"
+
 
 class MarketCapAllocation(BaseAllocationModel):
     """Market cap allocation in percentages."""
@@ -45,12 +61,20 @@ class MarketCapAllocation(BaseAllocationModel):
     mid_cap: int = Field(title="Mid Cap", strict=False)
     small_cap: int = Field(title="Small Cap", strict=False)
 
+    @classmethod
+    def prefix(cls):
+        return "marketcap"
+
 
 class GrowthValueAllocation(BaseAllocationModel):
     """Growth value allocation in percentages."""
 
     growth: int = Field(title="Growth", default=0, strict=False)
     value: int = Field(title="Value", default=0, strict=False)
+
+    @classmethod
+    def prefix(cls):
+        return "strategy"
 
 
 
@@ -60,6 +84,10 @@ class EconomicStatusAllocation(BaseAllocationModel):
     developed: int = Field(title="Developed Markets", default=0, strict=False)
     emerging: int = Field(title="Emerging Markets", default=0, strict=False)
     frontier: int = Field(title="Frontier Markets", default=0, strict=False)
+
+    @classmethod
+    def prefix(cls):
+        return "econ_status"
 
 
 class SectorAllocation(BaseAllocationModel):
@@ -76,6 +104,10 @@ class SectorAllocation(BaseAllocationModel):
     utilities: int = Field(title="Utilities", default=0, strict=False)
     real_estate: int = Field(title="Real Estate", default=0, strict=False)
     materials: int = Field(title="Materials", default=0, strict=False)
+
+    @classmethod
+    def prefix(cls):
+        return "sector"
 
 
 class SecurityAllocation(BaseModel):
