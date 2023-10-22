@@ -4,7 +4,7 @@ import streamlit as st
 import pandas as pd
 
 from portfolio_app.portfolio.allocation import AllocationLookupService
-from portfolio_app.portfolio.models import EconomicStatusAllocation, MarketCapAllocation, RegionAllocation, SecurityAllocation
+from portfolio_app.portfolio.models import EconomicStatusAllocation, GrowthValueAllocation, MarketCapAllocation, RegionAllocation, SecurityAllocation, USInternationalAllocation
 from portfolio_app.portfolio.util import float_dollars, float_pct
 
 allocation_service = AllocationLookupService()
@@ -102,43 +102,7 @@ class Portfolio:
         securities_df = self.df()
         allocation_df = self.allocation_df()
         return pd.merge(securities_df, allocation_df, on='symbol') 
-    
-    def get_us_international_df(self) -> pd.DataFrame:
-        merged_df = self._merged_df() 
-        merged_df['us_value'] = merged_df['quantity'] * merged_df['last_price'] * merged_df['us_pct'] / 100
-        merged_df['international_value'] = merged_df['quantity'] * merged_df['last_price'] * merged_df['international_pct'] / 100
         
-        total_us_value = merged_df['us_value'].sum()
-        total_international_value = merged_df['international_value'].sum()
-        
-        total_value = total_us_value + total_international_value
-        
-        us_pct = (total_us_value / total_value) * 100
-        international_pct = (total_international_value / total_value) * 100
-        
-        return pd.DataFrame({
-            'Total Value': [total_us_value, total_international_value],
-            'Percentage': [float_pct(us_pct), float_pct(international_pct)]
-        }, index=['US', 'International'])
-        
-    
-    def get_growth_value_df(self) -> pd.DataFrame:  
-        merged_df = self._merged_df() 
-        merged_df['growth_amt'] = merged_df['quantity'] * merged_df['last_price'] * merged_df['growth_pct'] / 100
-        merged_df['value_amt'] = merged_df['quantity'] * merged_df['last_price'] * merged_df['value_pct'] / 100
-        
-        total_growth_amt = merged_df['growth_amt'].sum()
-        total_value_amt = merged_df['value_amt'].sum()
-        
-        total_value = total_growth_amt + total_value_amt
-        
-        growth_pct = (total_growth_amt / total_value) * 100
-        value_pct = (total_value_amt / total_value) * 100
-        
-        return pd.DataFrame({
-            'Total Value': [float_dollars(total_growth_amt), float_dollars(total_value_amt)],
-            'Percentage': [float_pct(growth_pct), float_pct(value_pct)]
-        }, index=['Growth', 'Value'])
     
     def get_bucketed_df(self, keys: List[str], labels: List[str]) -> pd.DataFrame:
         merged_df = self._merged_df()
@@ -151,6 +115,16 @@ class Portfolio:
             'Total Value': (float_dollars(total) for total in totals),
             'Percentage': percentages
         }, index=labels)
+    
+    def get_us_international_df(self) -> pd.DataFrame:
+        return self.get_bucketed_df(
+            *USInternationalAllocation.keys_labels() 
+        )
+    
+    def get_growth_value_df(self) -> pd.DataFrame:
+        return self.get_bucketed_df(
+            *GrowthValueAllocation.keys_labels() 
+        )
     
     def get_market_cap_df(self) -> pd.DataFrame:
         return self.get_bucketed_df(
