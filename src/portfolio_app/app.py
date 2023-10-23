@@ -1,6 +1,9 @@
 import os
 import sys
+from pandas import DataFrame
 import streamlit as st
+import altair as alt
+from portfolio_app.charts import ChartManager
 
 sys.path.append(
     os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir))
@@ -32,12 +35,39 @@ def render_sidebar():
 def render_data(portfolio: Portfolio):
     st.write(portfolio.df())
     st.write(portfolio.allocation_df())
-    st.write(portfolio.get_us_international_df())
-    st.write(portfolio.get_growth_value_df())
-    st.write(portfolio.get_market_cap_df())
-    st.write(portfolio.get_region_df())
-    st.write(portfolio.get_economic_status_df())
 
+    st.write("Region Allocation")
+    us_intl_allocation: DataFrame = portfolio.get_us_international_df()
+    st.bar_chart(us_intl_allocation, y="Total Value")
+    st.altair_chart(ChartManager.get_pie_chart(us_intl_allocation), use_container_width=True)
+    st.write(us_intl_allocation)
+
+    # region_allocation: DataFrame = portfolio.get_region_df()
+    # st.bar_chart(region_allocation, y="Total Value")
+    # st.write(region_allocation)
+
+    economic_allocation: DataFrame = portfolio.get_economic_status_df()
+    st.bar_chart(economic_allocation, y="Total Value")
+    st.altair_chart(ChartManager.get_pie_chart(economic_allocation), use_container_width=True)
+    st.write(economic_allocation)
+
+    growth_value_df: DataFrame = portfolio.get_growth_value_df()
+    st.bar_chart(us_intl_allocation, y="Total Value")
+    st.altair_chart(ChartManager.get_pie_chart(growth_value_df), use_container_width=True)
+    st.write(growth_value_df)
+
+    market_cap_df: DataFrame = portfolio.get_market_cap_df()
+    st.bar_chart(market_cap_df, y="Total Value")
+    st.altair_chart(ChartManager.get_pie_chart(market_cap_df), use_container_width=True)
+    st.write(market_cap_df)
+
+    sector_df: DataFrame = portfolio.get_sector_df()
+    st.bar_chart(sector_df, y="Total Value")
+    st.altair_chart(ChartManager.get_pie_chart(sector_df), use_container_width=True)
+    st.write(sector_df)
+
+
+    st.write(f"Total Expense Ratio: {portfolio.get_total_expense_ratio()}")
     st.write(f"Total Portfolio Value: {portfolio.total_value()}")
 
 

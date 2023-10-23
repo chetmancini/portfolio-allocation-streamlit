@@ -4,7 +4,7 @@ import streamlit as st
 import pandas as pd
 
 from portfolio_app.portfolio.allocation import AllocationLookupService
-from portfolio_app.portfolio.models import EconomicStatusAllocation, GrowthValueAllocation, MarketCapAllocation, RegionAllocation, SecurityAllocation, USInternationalAllocation
+from portfolio_app.portfolio.models import EconomicStatusAllocation, GrowthValueAllocation, MarketCapAllocation, RegionAllocation, SectorAllocation, SecurityAllocation, USInternationalAllocation
 from portfolio_app.portfolio.util import float_dollars, float_pct
 
 allocation_service = AllocationLookupService()
@@ -152,6 +152,11 @@ class Portfolio:
     def get_economic_status_df(self) -> pd.DataFrame:
         return self.get_bucketed_df(
             *EconomicStatusAllocation.keys_labels() 
+        )
+    
+    def get_sector_df(self) -> pd.DataFrame:
+        return self.get_bucketed_df(
+            *SectorAllocation.keys_labels() 
         )
 
 
