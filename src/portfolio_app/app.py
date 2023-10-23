@@ -63,16 +63,12 @@ def render_data(portfolio: Portfolio):
 
     market_cap_df: DataFrame = portfolio.get_market_cap_df()
     st.bar_chart(market_cap_df, y="Total Value")
-    st.altair_chart(
-        ChartManager.get_pie_chart(market_cap_df), use_container_width=True
-    )
+    st.altair_chart(ChartManager.get_pie_chart(market_cap_df), use_container_width=True)
     st.write(market_cap_df)
 
     sector_df: DataFrame = portfolio.get_sector_df()
     st.bar_chart(sector_df, y="Total Value")
-    st.altair_chart(
-        ChartManager.get_pie_chart(sector_df), use_container_width=True
-    )
+    st.altair_chart(ChartManager.get_pie_chart(sector_df), use_container_width=True)
     st.write(sector_df)
 
     st.write(f"Total Expense Ratio: {portfolio.get_total_expense_ratio()}")
