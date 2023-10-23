@@ -2,7 +2,6 @@
 from altair import Chart as AltairChart
 import altair as alt
 from pandas import DataFrame
-from portfolio_app.portfolio.portfolio import Portfolio
 
 
 class ChartManager:

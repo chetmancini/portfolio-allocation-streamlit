@@ -2,7 +2,6 @@ import os
 import sys
 from pandas import DataFrame
 import streamlit as st
-import altair as alt
 from portfolio_app.charts import ChartManager
 
 sys.path.append(
