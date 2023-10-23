@@ -50,9 +50,19 @@ class Portfolio:
         return self.cash + sum(
             (holding.total_value for holding in self.holdings.values())
         )
+    
+    def total_return(self) -> float:
+        return sum(
+            (holding.total_return() for holding in self.holdings.values())
+        )
 
     def add_security(self, security):
         self.holdings[security.symbol] = security
+
+    def add_security_allocation_data(self, security_allocation_data: SecurityAllocation):
+        self.security_allocation_data[
+            security_allocation_data.symbol
+        ] = security_allocation_data
 
     def set_cash(self, cash) -> None:
         self.cash = cash
@@ -103,7 +113,10 @@ class Portfolio:
         allocation_df = self.allocation_df()
         return pd.merge(securities_df, allocation_df, on='symbol') 
         
-    
+    def get_total_expense_ratio(self) -> float:
+        df = self._merged_df()
+        return (df['quantity'] * df['last_price'] * df['expense_ratio']).sum() / self.total_value()
+
     def get_bucketed_df(self, keys: List[str], labels: List[str]) -> pd.DataFrame:
         merged_df = self._merged_df()
         totals = [

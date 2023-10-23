@@ -34,7 +34,7 @@ class RegionAllocation(BaseAllocationModel):
     """Region allocation in percentages."""
 
     north_america: int = Field(title="North America", default=0, strict=False)
-    eama: int = Field(title="Europe & Middle East",default=0, strict=False)
+    emea: int = Field(title="Europe, Middle East, Africa",default=0, strict=False)
     latam: int = Field(title="Latin America", default=0, strict=False)
     apac: int = Field(title="Asia/Pacific", default=0, strict=False)
     global_: int = Field(title="Global", alias="global_", default=100, strict=False)
@@ -139,11 +139,13 @@ class SecurityAllocation(BaseModel):
     region_allocation: RegionAllocation
     growth_value_allocation: GrowthValueAllocation
     economic_status_allocation: EconomicStatusAllocation
+    sector_allocation: SectorAllocation
 
     def to_dict(self):
         ret = {
             "symbol": self.symbol,
             "security_name": self.security_name,
+            "expense_ratio": self.expense_ratio,
         }
         ret.update(self.fund_asset_allocation.to_dict())
         ret.update(self.market_cap_allocation.to_dict())
@@ -151,4 +153,5 @@ class SecurityAllocation(BaseModel):
         ret.update(self.region_allocation.to_dict())
         ret.update(self.growth_value_allocation.to_dict())
         ret.update(self.economic_status_allocation.to_dict())
+        ret.update(self.sector_allocation.to_dict())
         return ret

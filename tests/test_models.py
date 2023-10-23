@@ -30,14 +30,14 @@ def test_region_allocation_keys_labels():
     keys, labels = RegionAllocation.keys_labels()
     assert keys == [
         "region_north_america_pct",
-        "region_eama_pct",
+        "region_emea_pct",
         "region_latam_pct",
         "region_apac_pct",
         "region_global__pct",
     ]
     assert labels == [
         "North America",
-        "Europe & Middle East",
+        "Europe, Middle East, Africa",
         "Latin America",
         "Asia/Pacific",
         "Global",
@@ -63,11 +63,11 @@ def test_sector_allocation():
 
 def test_region_allocation():
     allocation = RegionAllocation(
-        north_america=25, eama=25, latam=25, apac=25, global_=0
+        north_america=25, emea=25, latam=25, apac=25, global_=0
     )
     assert allocation.to_dict() == {
         "region_north_america_pct": 25,
-        "region_eama_pct": 25,
+        "region_emea_pct": 25,
         "region_latam_pct": 25,
         "region_apac_pct": 25,
         "region_global__pct": 0,
