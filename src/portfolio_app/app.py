@@ -8,7 +8,7 @@ sys.path.append(
     os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir))
 )
 from portfolio_app.datasource.base import DataSource  # noqa: E402
-from portfolio_app.datasource.factory import ( # noqa: E402
+from portfolio_app.datasource.factory import (  # noqa: E402
     data_source_factory,
     data_source_options,
     data_source_display_name,
@@ -38,7 +38,9 @@ def render_data(portfolio: Portfolio):
     st.write("Region Allocation")
     us_intl_allocation: DataFrame = portfolio.get_us_international_df()
     st.bar_chart(us_intl_allocation, y="Total Value")
-    st.altair_chart(ChartManager.get_pie_chart(us_intl_allocation), use_container_width=True)
+    st.altair_chart(
+        ChartManager.get_pie_chart(us_intl_allocation), use_container_width=True
+    )
     st.write(us_intl_allocation)
 
     # region_allocation: DataFrame = portfolio.get_region_df()
@@ -47,24 +49,31 @@ def render_data(portfolio: Portfolio):
 
     economic_allocation: DataFrame = portfolio.get_economic_status_df()
     st.bar_chart(economic_allocation, y="Total Value")
-    st.altair_chart(ChartManager.get_pie_chart(economic_allocation), use_container_width=True)
+    st.altair_chart(
+        ChartManager.get_pie_chart(economic_allocation), use_container_width=True
+    )
     st.write(economic_allocation)
 
     growth_value_df: DataFrame = portfolio.get_growth_value_df()
     st.bar_chart(us_intl_allocation, y="Total Value")
-    st.altair_chart(ChartManager.get_pie_chart(growth_value_df), use_container_width=True)
+    st.altair_chart(
+        ChartManager.get_pie_chart(growth_value_df), use_container_width=True
+    )
     st.write(growth_value_df)
 
     market_cap_df: DataFrame = portfolio.get_market_cap_df()
     st.bar_chart(market_cap_df, y="Total Value")
-    st.altair_chart(ChartManager.get_pie_chart(market_cap_df), use_container_width=True)
+    st.altair_chart(
+        ChartManager.get_pie_chart(market_cap_df), use_container_width=True
+    )
     st.write(market_cap_df)
 
     sector_df: DataFrame = portfolio.get_sector_df()
     st.bar_chart(sector_df, y="Total Value")
-    st.altair_chart(ChartManager.get_pie_chart(sector_df), use_container_width=True)
+    st.altair_chart(
+        ChartManager.get_pie_chart(sector_df), use_container_width=True
+    )
     st.write(sector_df)
-
 
     st.write(f"Total Expense Ratio: {portfolio.get_total_expense_ratio()}")
     st.write(f"Total Portfolio Value: {portfolio.total_value()}")
