@@ -13,7 +13,10 @@ class BaseAllocationModel(BaseModel):
 
     @classmethod
     def keys_labels(cls) -> Tuple[List[str], List[str]]:
-        return [f"{cls.prefix()}_{f}_pct" for f in cls.model_fields], [f.title for f in cls.model_fields.values()]
+        return (
+            [f"{cls.prefix()}_{f}_pct" for f in cls.model_fields], 
+            [f.title for f in cls.model_fields.values()]
+        )
 
 
 class USInternationalAllocation(BaseAllocationModel):
