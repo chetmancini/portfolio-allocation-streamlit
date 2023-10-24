@@ -74,7 +74,7 @@ class FundAssetAllocation(BaseAllocationModel):
 
     @classmethod
     def prefix(cls):
-        return "asset_type"
+        return "asset"
 
 
 class MarketCapAllocation(BaseAllocationModel):
