@@ -165,7 +165,7 @@ class Portfolio:
         return self.get_bucketed_df(*SectorAllocation.keys_labels())
 
 
-class Security:
+class SecurityHolding:
     def __init__(self):
         self.symbol: str = ""
         self.name: str = ""
@@ -185,8 +185,8 @@ class Security:
         last_price,
         avg_price_paid,
         total_value: Optional[float] = None,
-    ) -> "Security":
-        security = Security()
+    ) -> "SecurityHolding":
+        security = SecurityHolding()
         security.symbol = symbol
         security.name = name
         security.security_type = security_type

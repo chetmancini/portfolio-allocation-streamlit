@@ -10,8 +10,12 @@ from portfolio_app.portfolio.models import (
     SecurityInfo,
     USInternationalAllocation,
 )
-from portfolio_app.portfolio.portfolio import PortfolioType, SecurityType
-from portfolio_app.portfolio.portfolio import Portfolio, Security
+from portfolio_app.portfolio.portfolio import (
+    Portfolio,
+    PortfolioType,
+    SecurityHolding,
+    SecurityType,
+)
 
 
 class TestPortfolio:
@@ -24,7 +28,7 @@ class TestPortfolio:
         )
         portfolio.set_cash(999.99)
 
-        spy = Security.build(
+        spy = SecurityHolding.build(
             symbol="SPY",
             name="SPDR S&P 500 ETF",
             security_type=SecurityType.ETF,
@@ -73,7 +77,7 @@ class TestPortfolio:
         )
         portfolio.add_security(spy)
         portfolio.add_security_allocation_data(spy_allocation)
-        vti = Security.build(
+        vti = SecurityHolding.build(
             symbol="VTI",
             name="Vanguard Total Stock Market ETF",
             security_type=SecurityType.ETF,
@@ -121,7 +125,7 @@ class TestPortfolio:
         )
         portfolio.add_security(vti)
         portfolio.add_security_allocation_data(vti_allocation)
-        vwo = Security.build(
+        vwo = SecurityHolding.build(
             symbol="VWO",
             name="Vanguard FTSE Emerging Markets ETF",
             security_type=SecurityType.ETF,
@@ -172,7 +176,7 @@ class TestPortfolio:
         )
         portfolio.add_security(vwo)
         portfolio.add_security_allocation_data(vwo_allocation)
-        arkk = Security.build(
+        arkk = SecurityHolding.build(
             symbol="ARKK",
             name="ARK Innovation ETF",
             security_type=SecurityType.ETF,
@@ -296,7 +300,7 @@ class TestPortfolio:
 
 class TestSecurity:
     def test_security(self):
-        subject = Security.build(
+        subject = SecurityHolding.build(
             symbol="AAPL",
             name="Apple",
             security_type=SecurityType.STOCK,
