@@ -97,11 +97,11 @@ class MockOpenAIClient(AllocationDataClient):
             ),
             market_cap_allocation=MarketCapAllocation(
                 small_cap=30,
-                medium_cap=30,
+                mid_cap=30,
                 large_cap=40,
             ),
             us_international_allocation=USInternationalAllocation(
-                usa=50,
+                us=50,
                 international=50,
             ),
             region_allocation=RegionAllocation(
