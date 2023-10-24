@@ -3,8 +3,17 @@ from typing import Dict, List, Optional
 import streamlit as st
 import pandas as pd
 
-from portfolio_app.portfolio.allocation import AllocationLookupService
-from portfolio_app.portfolio.models import EconomicStatusAllocation, GrowthValueAllocation, MarketCapAllocation, RegionAllocation, SectorAllocation, SecurityAllocation, USInternationalAllocation
+from portfolio_app.repository.allocation import AllocationLookupService
+from portfolio_app.portfolio.models import (
+    EconomicStatusAllocation,
+    GrowthValueAllocation,
+    MarketCapAllocation,
+    RegionAllocation,
+    SectorAllocation,
+    SecurityAllocation,
+    SecurityType,
+    USInternationalAllocation,
+)
 from portfolio_app.portfolio.util import float_dollars, float_pct
 
 allocation_service = AllocationLookupService()
@@ -50,16 +59,16 @@ class Portfolio:
         return self.cash + sum(
             (holding.total_value for holding in self.holdings.values())
         )
-    
+
     def total_return(self) -> float:
-        return sum(
-            (holding.total_return() for holding in self.holdings.values())
-        )
+        return sum((holding.total_return() for holding in self.holdings.values()))
 
     def add_security(self, security):
         self.holdings[security.symbol] = security
 
-    def add_security_allocation_data(self, security_allocation_data: SecurityAllocation):
+    def add_security_allocation_data(
+        self, security_allocation_data: SecurityAllocation
+    ):
         self.security_allocation_data[
             security_allocation_data.symbol
         ] = security_allocation_data
@@ -107,68 +116,53 @@ class Portfolio:
         if not _self._data_complete:
             _self._complete_portfolio_data()
         return pd.DataFrame((holding.to_dict() for holding in _self.holdings.values()))
-    
+
     def _merged_df(self) -> pd.DataFrame:
         securities_df = self.df()
         allocation_df = self.allocation_df()
-        return pd.merge(securities_df, allocation_df, on='symbol') 
-        
+        return pd.merge(securities_df, allocation_df, on="symbol")
+
     def get_total_expense_ratio(self) -> float:
         df = self._merged_df()
-        return (df['quantity'] * df['last_price'] * df['expense_ratio']).sum() / self.total_value()
+        return (
+            df["quantity"] * df["last_price"] * df["expense_ratio"]
+        ).sum() / self.total_value()
 
     def get_bucketed_df(self, keys: List[str], labels: List[str]) -> pd.DataFrame:
         merged_df = self._merged_df()
         totals = [
-            (merged_df['quantity'] * merged_df['last_price'] * merged_df[key] / 100).sum() for key in keys
+            (
+                merged_df["quantity"] * merged_df["last_price"] * merged_df[key] / 100
+            ).sum()
+            for key in keys
         ]
         total_value = sum(totals)
         percentages = (float_pct((total / total_value) * 100) for total in totals)
-        return pd.DataFrame({
-            'Total Value': (float_dollars(total) for total in totals),
-            'Percentage': percentages
-        }, index=labels)
-    
+        return pd.DataFrame(
+            {
+                "Total Value": (float_dollars(total) for total in totals),
+                "Percentage": percentages,
+            },
+            index=labels,
+        )
+
     def get_us_international_df(self) -> pd.DataFrame:
-        return self.get_bucketed_df(
-            *USInternationalAllocation.keys_labels() 
-        )
-    
+        return self.get_bucketed_df(*USInternationalAllocation.keys_labels())
+
     def get_growth_value_df(self) -> pd.DataFrame:
-        return self.get_bucketed_df(
-            *GrowthValueAllocation.keys_labels() 
-        )
-    
+        return self.get_bucketed_df(*GrowthValueAllocation.keys_labels())
+
     def get_market_cap_df(self) -> pd.DataFrame:
-        return self.get_bucketed_df(
-            *MarketCapAllocation.keys_labels() 
-        )
-    
+        return self.get_bucketed_df(*MarketCapAllocation.keys_labels())
+
     def get_region_df(self) -> pd.DataFrame:
-        return self.get_bucketed_df(
-            *RegionAllocation.keys_labels() 
-        )
-    
+        return self.get_bucketed_df(*RegionAllocation.keys_labels())
+
     def get_economic_status_df(self) -> pd.DataFrame:
-        return self.get_bucketed_df(
-            *EconomicStatusAllocation.keys_labels() 
-        )
-    
+        return self.get_bucketed_df(*EconomicStatusAllocation.keys_labels())
+
     def get_sector_df(self) -> pd.DataFrame:
-        return self.get_bucketed_df(
-            *SectorAllocation.keys_labels() 
-        )
-
-
-
-class SecurityType(Enum):
-    STOCK = "Stock"
-    OPTION = "Option"
-    BOND = "Bond"
-    ETF = "ETF"
-    REIT = "REIT"
-    MUTUAL_FUND = "Mutual Fund"
-    OTHER = "Other"
+        return self.get_bucketed_df(*SectorAllocation.keys_labels())
 
 
 class Security:
