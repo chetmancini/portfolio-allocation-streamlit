@@ -47,7 +47,7 @@ class Portfolio:
         portfolio_source: str = None,
         portfolio_type: PortfolioType = None,
     ):
-        self.holdings: Dict[str, Security] = {}
+        self.holdings: Dict[str, SecurityHolding] = {}
         self.cash: float = 0.0
         self.account_name: str = account_name
         self.portfolio_source: str = portfolio_source
@@ -86,7 +86,9 @@ class Portfolio:
         for symbol, security in self.holdings.items():
             if symbol in self.security_allocation_data:
                 if not security.name:
-                    security.name = self.security_allocation_data[symbol].security_name
+                    security.name = self.security_allocation_data[
+                        symbol
+                    ].security_info.security_name
 
     def _fetch_security_data(self):
         for symbol in self.holdings.keys():

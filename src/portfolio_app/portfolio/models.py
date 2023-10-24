@@ -78,7 +78,7 @@ class MarketCapAllocation(BaseAllocationModel):
 
     @classmethod
     def prefix(cls):
-        return "marketcap"
+        return "mc"
 
 
 class GrowthValueAllocation(BaseAllocationModel):
@@ -101,7 +101,7 @@ class EconomicStatusAllocation(BaseAllocationModel):
 
     @classmethod
     def prefix(cls):
-        return "econ_status"
+        return "econ"
 
 
 class SectorAllocation(BaseAllocationModel):
