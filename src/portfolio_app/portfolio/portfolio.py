@@ -126,9 +126,10 @@ class Portfolio:
 
     def get_total_expense_ratio(self) -> float:
         df = self._merged_df()
-        return (
+        expense_ration: float = (
             df["quantity"] * df["last_price"] * df["expense_ratio"]
         ).sum() / self.total_value()
+        return round(expense_ration, 4)
 
     def get_bucketed_df(self, keys: List[str], labels: List[str]) -> pd.DataFrame:
         merged_df = self._merged_df()

@@ -288,8 +288,7 @@ class TestPortfolio:
         assert df.index.size == 4
 
     def test_portfolio_df_total_expense_ratio(self, portfolio):
-        pass
-        # assert portfolio.get_total_expense_ratio() == 0.125
+        assert portfolio.get_total_expense_ratio() == 0.1764
 
     def test_portfolio_total_value(self, portfolio):
         assert portfolio.total_value() == 4749.99
