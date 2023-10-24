@@ -1,5 +1,8 @@
+from pydantic import ValidationError
+import pytest
 from portfolio_app.portfolio.models import (
     EconomicStatusAllocation,
+    MarketCapAllocation,
     SectorAllocation,
     GrowthValueAllocation,
     USInternationalAllocation,
@@ -10,20 +13,48 @@ from portfolio_app.portfolio.models import (
 
 def test_economic_status_allocation_keys_labels():
     keys, labels = EconomicStatusAllocation.keys_labels()
-    assert keys == ["econ_status_developed_pct", "econ_status_emerging_pct", "econ_status_frontier_pct"]
-    assert labels == ["Developed Markets", "Emerging Markets", "Frontier Markets"]
+    assert keys == [
+        "econ_developed_pct",
+        "econ_emerging_pct",
+        "econ_frontier_pct",
+    ]
+    assert labels == [
+        "Developed Markets",
+        "Emerging Markets",
+        "Frontier Markets",
+    ]
 
 
 def test_growth_value_allocation_keys_labels():
     keys, labels = GrowthValueAllocation.keys_labels()
-    assert keys == ["strategy_growth_pct", "strategy_value_pct"]
-    assert labels == ["Growth", "Value"]
+    assert keys == [
+        "strategy_growth_pct",
+        "strategy_value_pct",
+    ]
+    assert labels == [
+        "Growth",
+        "Value",
+    ]
 
 
 def test_us_international_allocation_keys_labels():
     keys, labels = USInternationalAllocation.keys_labels()
     assert keys == ["intl_us_pct", "intl_international_pct"]
     assert labels == ["US", "International"]
+
+
+def test_market_cap_allocation_keys_labels():
+    keys, labels = MarketCapAllocation.keys_labels()
+    assert keys == [
+        "mc_large_cap_pct",
+        "mc_mid_cap_pct",
+        "mc_small_cap_pct",
+    ]
+    assert labels == [
+        "Large Cap",
+        "Mid Cap",
+        "Small Cap",
+    ]
 
 
 def test_region_allocation_keys_labels():
@@ -42,6 +73,37 @@ def test_region_allocation_keys_labels():
         "Asia/Pacific",
         "Global",
     ]
+
+
+def test_us_international_allocation():
+    allocation = USInternationalAllocation(us=50, international=50)
+    assert allocation.to_dict() == {
+        "intl_us_pct": 50,
+        "intl_international_pct": 50,
+    }
+
+
+def test_us_international_allocation_validation():
+    USInternationalAllocation(us=50, international=51)
+    with pytest.raises(ValidationError):
+        USInternationalAllocation(us=50, international=53)
+
+
+def test_growth_value_allocation():
+    allocation = GrowthValueAllocation(growth=50, value=50)
+    assert allocation.to_dict() == {
+        "strategy_growth_pct": 50,
+        "strategy_value_pct": 50,
+    }
+
+
+def test_market_cap_allocation():
+    allocation = MarketCapAllocation(small_cap=50, mid_cap=50, large_cap=0)
+    assert allocation.to_dict() == {
+        "mc_large_cap_pct": 0,
+        "mc_mid_cap_pct": 50,
+        "mc_small_cap_pct": 50,
+    }
 
 
 def test_sector_allocation():

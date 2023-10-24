@@ -1,6 +1,6 @@
 from enum import Enum
 from typing import List, Tuple
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 
 class SecurityType(str, Enum):
@@ -30,6 +30,14 @@ class BaseAllocationModel(BaseModel):
             [f.title for f in cls.model_fields.values()],
         )
 
+    @model_validator(mode="after")
+    def sum_to_100(self) -> "BaseAllocationModel":
+        """Validate that the percentages sum to 100."""
+        total = sum(getattr(self, f) for f in self.model_fields)
+        if 99 > total or total > 101:
+            raise ValueError(f"Percentages sum to {total}, must sum to 100.")
+        return self
+
 
 class USInternationalAllocation(BaseAllocationModel):
     """US and international allocation in percentages."""
@@ -49,7 +57,7 @@ class RegionAllocation(BaseAllocationModel):
     emea: int = Field(title="Europe, Middle East, Africa", default=0, strict=False)
     latam: int = Field(title="Latin America", default=0, strict=False)
     apac: int = Field(title="Asia/Pacific", default=0, strict=False)
-    global_: int = Field(title="Global", alias="global_", default=100, strict=False)
+    global_: int = Field(title="Global", alias="global_", default=0, strict=False)
 
     @classmethod
     def prefix(cls):
