@@ -2,12 +2,12 @@ import os
 import sys
 from pandas import DataFrame
 import streamlit as st
-from portfolio_app.charts import ChartManager
-from portfolio_app.provider.openai import OpenAIClient
 
 sys.path.append(
     os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir))
 )
+from portfolio_app.charts import ChartManager  # noqa: E402
+from portfolio_app.provider.openai import OpenAIClient  # noqa: E402
 from portfolio_app.datasource.base import DataSource  # noqa: E402
 from portfolio_app.datasource.factory import (  # noqa: E402
     data_source_factory,
@@ -28,11 +28,21 @@ def setup_portfolio(
 
 
 def render_sidebar():
+    st.sidebar.title("Configure")
     openai_api_key = st.sidebar.text_input("OpenAI API Key", type="password")
     OpenAIClient.set_api_key(openai_api_key)
     st.session_state["openai_api_key"] = openai_api_key
     if OpenAIClient.validate_api_key(openai_api_key):
         st.sidebar.success("OpenAI API Key is valid")
+
+    st.sidebar.title("Personalize")
+    st.sidebar.number_input("Age", min_value=0, max_value=100, value=30)
+    st.sidebar.number_input("Retirement Age", min_value=0, max_value=100, value=65)
+    st.sidebar.select_slider(
+        "Risk Tolerance",
+        options=["Very Low", "Low", "Medium", "High", "Very High"],
+        value="Medium",
+    )
 
 
 def render_data(portfolio: Portfolio):
