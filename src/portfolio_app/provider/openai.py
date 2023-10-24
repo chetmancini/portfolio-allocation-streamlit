@@ -1,12 +1,25 @@
+from abc import ABCMeta
 import os
 from typing import Optional
 
 import openai
 
-from portfolio_app.portfolio.models import SecurityAllocation
+from portfolio_app.portfolio.models import (
+    EconomicStatusAllocation,
+    FundAssetAllocation,
+    GrowthValueAllocation,
+    MarketCapAllocation,
+    RegionAllocation,
+    SectorAllocation,
+    SecurityAllocation,
+    SecurityInfo,
+    SecurityType,
+    USInternationalAllocation,
+)
+from portfolio_app.provider.base import AllocationDataClient
 
 
-class OpenAIClient:
+class OpenAIClient(AllocationDataClient):
     def __init__(self, api_key: Optional[str] = None):
         self.set_api_key(api_key or os.getenv("OPENAI_API_KEY", None))
 
@@ -61,4 +74,49 @@ class OpenAIClient:
         )
         return SecurityAllocation.model_validate_json(
             response.choices[0]["message"]["function_call"]["arguments"]
+        )
+
+
+class MockOpenAIClient(AllocationDataClient):
+    def __init__(self) -> None:
+        super().__init__()
+
+    def lookup_allocation(self, symbol: str) -> SecurityAllocation:
+        return SecurityAllocation(
+            symbol=symbol,
+            security_info=SecurityInfo(
+                symbol=symbol,
+                security_name=f"Mock Security: {symbol}",
+                security_type=SecurityType.ETF,
+                homepage_url="https://www.mock.com",
+                expense_ratio=0.1,
+            ),
+            fund_asset_allocation=FundAssetAllocation(
+                stocks=50,
+                bonds=50,
+            ),
+            market_cap_allocation=MarketCapAllocation(
+                small_cap=30,
+                medium_cap=30,
+                large_cap=40,
+            ),
+            us_international_allocation=USInternationalAllocation(
+                usa=50,
+                international=50,
+            ),
+            region_allocation=RegionAllocation(
+                north_america=100,
+            ),
+            growth_value_allocation=GrowthValueAllocation(
+                growth=50,
+                value=50,
+            ),
+            economic_status_allocation=EconomicStatusAllocation(
+                developed=50,
+                emerging=50,
+            ),
+            sector_allocation=SectorAllocation(
+                information_technology=50,
+                health_care=50,
+            ),
         )

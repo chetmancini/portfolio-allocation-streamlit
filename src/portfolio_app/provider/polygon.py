@@ -23,3 +23,8 @@ class PolygonClient(LastPriceProviderClient):
         if res["status"] != "OK":
             raise Exception(f"Failed to get last price for {symbol}")
         return self._as_of_date(res["results"][0]["t"]), res["results"][0]["c"]
+
+
+class MockPolygonClient(LastPriceProviderClient):
+    def last_price(self, symbol: str) -> Tuple[date, float]:
+        return date.today(), 100.0
